@@ -3,7 +3,7 @@ import axios from 'axios';
 // CHANGES ////////////////////////////////////////
 const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://127.0.0.1:8000/api/'                   // Local Backend
-  : 'https://yourusername.pythonanywhere.com/api/'; // Cloud Backend (UPDATE THIS!)
+  : 'https://KanishkNegi.pythonanywhere.com/api/'; // Cloud Backend (UPDATE THIS!)
 
 const api = axios.create({
   // baseURL: 'http://127.0.0.1:8000/api/',
