@@ -9,6 +9,9 @@ from datetime import timedelta
 from .models import Post, Comment, Vote
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
 class PostPagination(PageNumberPagination):
     page_size = 10
@@ -143,3 +146,20 @@ class LeaderboardView(views.APIView):
         ).order_by('-score')[:5] # Top 5
         
         return Response(top_users)
+
+@api_view(['POST'])
+@permission_classes([AllowAny]) # Allow anyone to access this (no token needed)
+def register_user(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if not username or not password:
+        return Response({'error': 'Username and Password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # create_user automatically hashes the password
+    user = User.objects.create_user(username=username, password=password)
+    
+    return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)

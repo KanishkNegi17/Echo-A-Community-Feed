@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,8 @@ SECRET_KEY = "django-insecure-9$y#b*a+r%p*q5i=_@)9z4!qmrbsu%47r38_*!%gmrpbtrlew@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = [] ######################### CHAGES
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -123,10 +124,16 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-# Allow React Frontend (Vite usually runs on 5173)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+########################### CHANGES
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+###########################
+
+# Allow React Frontend (Vite usually runs on 5173)##############################################################CHANGES
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # DRF Configuration
 REST_FRAMEWORK = {

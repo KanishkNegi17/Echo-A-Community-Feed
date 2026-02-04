@@ -180,6 +180,7 @@ function App() {
   // UI State: Creating a New Global Post
   const [isPosting, setIsPosting] = useState(false);
   const [newPostContent, setNewPostContent] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const logout = () => {
     localStorage.removeItem('access_token');
@@ -255,21 +256,74 @@ function App() {
     }
   };
 
-  // --- RENDER: LOGIN ---
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('register/', { username, password });
+      toast.success("Account created! Please log in.");
+      setIsRegistering(false); // Switch back to login mode so they can sign in
+    } catch (err) {
+      // Check if the backend sent a specific error message
+      if (err.response && err.response.data && err.response.data.error) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error("Registration failed. Try a different username.");
+      }
+    }
+  };
+
+  //////////////// CHANGED REGISTER
+
   if (!token) {
     return (
-      
-      <div className="flex h-screen justify-center items-center bg-gray-100">
-        <form onSubmit={login} className="bg-white p-8 rounded shadow-md w-80">
-          <h2 className="text-xl font-bold mb-4 text-center text-blue-800">Echo : A Community Feed</h2>
-          <input className="w-full mb-3 p-2 border rounded" placeholder="Username" onChange={e => setUsername(e.target.value)} />
-          <input className="w-full mb-3 p-2 border rounded" type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-          <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition font-medium">Sign In</button>
-        </form>
-        <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+      <div className="flex h-screen justify-center items-center bg-gray-100 flex-col">
+        <Toaster position="top-center" />
+        <div className="bg-white p-8 rounded shadow-md w-80">
+          <h2 className="text-xl font-bold mb-6 text-center text-gray-800">
+            {isRegistering ? 'Create Account' : 'Welcome Back'}
+          </h2>
+          
+          <form onSubmit={isRegistering ? handleRegister : login}>
+            <input 
+              className="w-full mb-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+              placeholder="Username" 
+              value={username}
+              onChange={e => setUsername(e.target.value)} 
+            />
+            <input 
+              className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+              type="password" 
+              placeholder="Password" 
+              value={password}
+              onChange={e => setPassword(e.target.value)} 
+            />
+            
+            <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition font-medium">
+              {isRegistering ? 'Sign Up' : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="mt-4 text-center text-sm">
+            <span className="text-gray-600">
+              {isRegistering ? "Already have an account? " : "New to ECHO? "}
+            </span>
+            <button 
+              onClick={() => {
+                setIsRegistering(!isRegistering);
+                setUsername(''); // Clear fields for better UX
+                setPassword('');
+              }}
+              className="text-blue-600 font-semibold hover:underline"
+            >
+              {isRegistering ? 'Login' : 'Register'}
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
+
+  //////////////////////////////////////// CHANGED 
 
   // --- RENDER: FEED ---
   return (
